@@ -1,0 +1,31 @@
+# LangSmith MCP Server Configuration
+# Oneiric layered configuration - see CLAUDE.md for details
+
+server_name: "LangSmith MCP Server"
+
+# API Configuration (api_key should be set via environment variable)
+api_endpoint: "https://api.smith.langchain.com"
+workspace_id: null  # Optional: uses default workspace if not set
+
+# Pagination defaults
+pagination:
+  max_chars_per_page: 25000
+  preview_chars: 100
+
+# Feature toggles - disable unused features to reduce API calls
+features_enabled:
+  - conversation
+  - prompts
+  - traces
+  - datasets
+  - experiments
+  - billing
+
+# HTTP client configuration
+http_timeout: 30.0
+max_retries: 3
+
+# Server configuration (mcp-common patterns)
+http_port: 3048
+http_host: "127.0.0.1"
+enable_http_transport: true

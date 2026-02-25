@@ -1,0 +1,69 @@
+[project]
+name = "langsmith-mcp"
+version = "0.1.0"
+description = "MCP server for LangSmith observability - traces, prompts, datasets, and experiments"
+authors = [
+    { name = "Les Leslie", email = "les@wedgwoodwebworks.com" },
+]
+requires-python = ">=3.13"
+dependencies = [
+    "fastmcp>=0.6.0",
+    "mcp-common>=0.9.5",
+    "oneiric>=0.3.6",
+    "httpx>=0.28.0",
+    "pydantic>=2.12.5",
+]
+
+[dependency-groups]
+dev = [
+    "crackerjack>=0.49.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+]
+
+[tool.langsmith-mcp]
+http_port = 3048
+http_host = "127.0.0.1"
+enable_http_transport = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+fix = true
+unsafe-fixes = true
+show-fixes = true
+output-format = "full"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+extend-select = [
+    "C901",
+    "F",
+    "I",
+    "UP",
+]
+ignore = [
+    "E402",
+    "F821",
+]
+fixable = ["ALL"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+timeout = 300
+addopts = "--cov=langsmith_mcp --cov-report=term"
+markers = [
+    "unit: marks test as a unit test",
+    "integration: marks test as an integration test",
+    "slow: marks test as slow (>2s)",
+]
+
+[tool.creosote]
+paths = ["langsmith_mcp"]
+
+[tool.bandit]
+target = ["langsmith_mcp"]
+skips = ["B101", "B110", "B311"]
