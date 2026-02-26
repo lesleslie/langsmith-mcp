@@ -14,6 +14,9 @@ dependencies = [
     "pydantic>=2.12.5",
 ]
 
+[tool.setuptools.packages.find]
+include = ["langsmith_mcp*"]
+
 [dependency-groups]
 dev = [
     "crackerjack>=0.49.0",

@@ -8,7 +8,7 @@ import sys
 from typing import Annotated, Any
 
 from fastmcp import FastMCP
-from mcp_common.errors import MCPError
+from mcp_common.exceptions import MCPServerError
 from pydantic import BaseModel, Field
 
 from langsmith_mcp.client import LangSmithAPIError
@@ -24,7 +24,7 @@ def get_settings() -> LangSmithSettings:
     """Get or create settings instance."""
     global _settings
     if _settings is None:
-        _settings = LangSmithSettings()
+        _settings = LangSmithSettings.load("langsmith")
     return _settings
 
 
@@ -164,7 +164,7 @@ def _handle_error(e: Exception, operation: str) -> dict[str, Any]:
             "status_code": e.status_code,
             "details": e.details,
         }
-    elif isinstance(e, MCPError):
+    elif isinstance(e, MCPServerError):
         logger.error(f"MCP error in {operation}: {e}")
         return {"status": "error", "error": str(e)}
     else:

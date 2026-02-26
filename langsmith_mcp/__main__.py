@@ -18,9 +18,10 @@ class LangSmithConfig(OneiricMCPConfig):
     http_host: str = "127.0.0.1"
     enable_http_transport: bool = True
 
-    class Config:
-        env_prefix = "LANGSMITH_MCP_"
-        env_file = ".env"
+    model_config = {
+        "env_prefix": "LANGSMITH_MCP_",
+        "env_file": ".env",
+    }
 
 
 class LangSmithMCPServer(BaseOneiricServerMixin):

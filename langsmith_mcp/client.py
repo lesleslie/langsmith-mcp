@@ -7,7 +7,7 @@ import logging
 from typing import Any
 
 import httpx
-from mcp_common.errors import MCPError
+from mcp_common.exceptions import MCPServerError
 from tenacity import (
     retry,
     retry_if_exception_type,
@@ -20,7 +20,7 @@ from langsmith_mcp.config import LangSmithSettings
 logger = logging.getLogger(__name__)
 
 
-class LangSmithAPIError(MCPError):
+class LangSmithAPIError(MCPServerError):
     """LangSmith API-specific error."""
 
     def __init__(self, message: str, status_code: int | None = None, details: dict[str, Any] | None = None):
@@ -75,7 +75,7 @@ class LangSmithClient:
     def _get_client(self) -> httpx.AsyncClient:
         """Get the HTTP client, initializing if needed."""
         if self._client is None:
-            raise MCPError("LangSmith client not initialized. Call initialize() first.")
+            raise MCPServerError("LangSmith client not initialized. Call initialize() first.")
         return self._client
 
     @retry(
@@ -145,11 +145,11 @@ class LangSmithClient:
                 "LangSmith request error",
                 extra={"path": path, "error": str(e)},
             )
-            raise MCPError(f"Request failed: {e}") from e
+            raise MCPServerError(f"Request failed: {e}") from e
 
         except Exception as e:
             logger.exception("Unexpected error in LangSmith request")
-            raise MCPError(f"Unexpected error: {e}") from e
+            raise MCPServerError(f"Unexpected error: {e}") from e
 
     # =====================
     # Conversation History
