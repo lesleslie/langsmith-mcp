@@ -98,13 +98,14 @@ class TestLangSmithSettings:
 
     def test_masked_api_key_full(self, clean_env):
         """Test API key masking with full key."""
-        os.environ["LANGSMITH_API_KEY"] = "test_fake_key_1234567890abcdefghijklmnop_9876zyxwv"
+        # Use a fake test key format (not a real key)
+        os.environ["LANGSMITH_API_KEY"] = "test_fake_key_1234567890abcdefghijklmnop_9876zyxw"
 
         settings = LangSmithSettings.load("langsmith")
         masked = settings.get_masked_api_key()
 
-        assert masked == "...65d7"
-        assert "lsv2_pt" not in masked
+        assert masked == "...yxwv"
+        assert "test_fake" not in masked
 
     def test_masked_api_key_short(self, clean_env):
         """Test API key masking with short key."""
