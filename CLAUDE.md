@@ -2,6 +2,8 @@
 
 This file provides guidance for Claude Code when working with code in this repository.
 
+For a shorter, tool-neutral bootstrap document, start with `AGENTS.md`.
+
 ## Project Overview
 
 LangSmith MCP Server is a Model Context Protocol server for LangSmith observability integration. It provides tools for retrieving conversation history, managing prompts, analyzing traces, and tracking usage.
@@ -29,16 +31,19 @@ This server is part of the **Bodai Ecosystem**:
 ### Key Patterns
 
 **Configuration** (`config.py`):
+
 - Extends `MCPServerSettings` from mcp-common
 - Uses Oneiric layered loading: defaults → YAML → env vars
 - Pydantic validation for all settings
 
 **API Client** (`client.py`):
+
 - Async context manager pattern (`async with client:`)
 - Retry logic with tenacity
 - Structured error handling with `LangSmithAPIError`
 
 **MCP Tools** (`main.py`):
+
 - Pydantic input models for validation
 - Consistent error handling via `_handle_error()`
 - Lazy client initialization
@@ -175,18 +180,22 @@ if settings.is_feature_enabled("billing"):
 ## MCP Tool Categories
 
 ### Conversation History (1 tool)
+
 - `get_thread_history` - Retrieve threaded messages with pagination
 
 ### Prompts (3 tools)
+
 - `list_prompts` - List all prompts
 - `get_prompt` - Get specific prompt with optional version
 - `push_prompt` - Push new prompt version
 
 ### Traces (2 tools)
+
 - `fetch_runs` - Fetch runs/traces with filters
 - `list_projects` - List all projects
 
 ### Datasets (5 tools)
+
 - `list_datasets` - List all datasets
 - `get_dataset` - Get dataset details
 - `list_examples` - List examples in dataset
@@ -194,13 +203,16 @@ if settings.is_feature_enabled("billing"):
 - `create_examples` - Add examples to dataset
 
 ### Experiments (2 tools)
+
 - `list_experiments` - List experiments
 - `get_experiment` - Get experiment details
 
 ### Billing (1 tool)
+
 - `get_billing_usage` - Get usage and costs
 
 ### Health (1 tool)
+
 - `health_check` - Server health status
 
 ## Common Tasks
@@ -208,18 +220,21 @@ if settings.is_feature_enabled("billing"):
 ### Adding a New Tool
 
 1. Create input model in `main.py`:
+
 ```python
 class NewToolInput(BaseModel):
     param: Annotated[str, Field(min_length=1, description="Parameter")]
 ```
 
 2. Add client method in `client.py`:
+
 ```python
 async def new_operation(self, param: str) -> dict[str, Any]:
     return await self._request("GET", f"/v1/endpoint/{param}")
 ```
 
 3. Create MCP tool in `main.py`:
+
 ```python
 @mcp.tool()
 async def new_tool(input_data: NewToolInput) -> dict[str, Any]:
@@ -235,8 +250,8 @@ async def new_tool(input_data: NewToolInput) -> dict[str, Any]:
 ### Updating Configuration
 
 1. Add field to `LangSmithSettings` in `config.py`
-2. Update `settings/langsmith.yaml` with default
-3. Document in README.md
+1. Update `settings/langsmith.yaml` with default
+1. Document in README.md
 
 ## Security
 

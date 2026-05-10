@@ -23,7 +23,12 @@ logger = logging.getLogger(__name__)
 class LangSmithAPIError(MCPServerError):
     """LangSmith API-specific error."""
 
-    def __init__(self, message: str, status_code: int | None = None, details: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        message: str,
+        status_code: int | None = None,
+        details: dict[str, Any] | None = None,
+    ):
         super().__init__(message)
         self.message = message
         self.status_code = status_code
@@ -76,7 +81,9 @@ class LangSmithClient:
     def _get_client(self) -> httpx.AsyncClient:
         """Get the HTTP client, initializing if needed."""
         if self._client is None:
-            raise MCPServerError("LangSmith client not initialized. Call initialize() first.")
+            raise MCPServerError(
+                "LangSmith client not initialized. Call initialize() first."
+            )
         return self._client
 
     @retry(

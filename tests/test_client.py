@@ -142,7 +142,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.get_prompt("test-prompt", version="v1")
+        await client.get_prompt("test-prompt", version="v1")
 
         mock_httpx_client.request.assert_called_once()
         call_args = mock_httpx_client.request.call_args
@@ -161,7 +161,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.push_prompt(
+        await client.push_prompt(
             "test-prompt",
             {"content": "New content", "metadata": {}},
         )
@@ -182,7 +182,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.fetch_runs(project_id="proj-123", limit=50)
+        await client.fetch_runs(project_id="proj-123", limit=50)
 
         mock_httpx_client.request.assert_called_once()
         call_args = mock_httpx_client.request.call_args
@@ -200,7 +200,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.list_projects()
+        await client.list_projects()
 
         mock_httpx_client.request.assert_called_once()
         call_args = mock_httpx_client.request.call_args
@@ -217,7 +217,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.get_thread_history(
+        await client.get_thread_history(
             thread_id="thread-123",
             project_name="my-project",
             page_number=2,
@@ -257,7 +257,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.get_dataset("ds-123")
+        await client.get_dataset("ds-123")
 
         mock_httpx_client.request.assert_called_once()
         call_args = mock_httpx_client.request.call_args
@@ -274,7 +274,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.create_dataset(
+        await client.create_dataset(
             name="New Dataset",
             description="Test description",
             data_type="kv",
@@ -296,7 +296,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.list_experiments(dataset_id="ds-123")
+        await client.list_experiments(dataset_id="ds-123")
 
         mock_httpx_client.request.assert_called_once()
         call_args = mock_httpx_client.request.call_args
@@ -313,7 +313,7 @@ class TestLangSmithClientRequests:
         client = LangSmithClient(settings)
         client._client = mock_httpx_client
 
-        result = await client.get_billing_usage(
+        await client.get_billing_usage(
             start_date="2024-01-01",
             end_date="2024-01-31",
         )

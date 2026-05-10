@@ -6,8 +6,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from langsmith_mcp.client import LangSmithAPIError
+from langsmith_mcp.config import LangSmithSettings
 from langsmith_mcp.main import (
     _handle_error,
+    create_dataset,
+    create_examples,
+    fetch_runs,
     get_billing_usage,
     get_dataset,
     get_experiment,
@@ -20,11 +24,7 @@ from langsmith_mcp.main import (
     list_projects,
     list_prompts,
     push_prompt,
-    fetch_runs,
-    create_dataset,
-    create_examples,
 )
-from langsmith_mcp.config import LangSmithSettings
 
 
 @pytest.fixture
@@ -198,16 +198,12 @@ class TestTraceTools:
     @pytest.mark.asyncio
     async def test_fetch_runs(self, mock_client):
         """Test fetch_runs tool."""
-        mock_client.fetch_runs = AsyncMock(
-            return_value={"runs": [{"id": "run-123"}]}
-        )
+        mock_client.fetch_runs = AsyncMock(return_value={"runs": [{"id": "run-123"}]})
 
         with patch("langsmith_mcp.main._get_client", return_value=mock_client):
             from langsmith_mcp.main import RunsInput
 
-            result = await fetch_runs(
-                RunsInput(project_id="proj-123", limit=100)
-            )
+            result = await fetch_runs(RunsInput(project_id="proj-123", limit=100))
 
         assert result["status"] == "success"
         mock_client.fetch_runs.assert_called_once()
@@ -296,9 +292,7 @@ class TestDatasetTools:
     @pytest.mark.asyncio
     async def test_create_examples(self, mock_client):
         """Test create_examples tool."""
-        mock_client.create_examples = AsyncMock(
-            return_value={"created": 2}
-        )
+        mock_client.create_examples = AsyncMock(return_value={"created": 2})
 
         with patch("langsmith_mcp.main._get_client", return_value=mock_client):
             from langsmith_mcp.main import CreateExamplesInput

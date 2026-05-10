@@ -632,7 +632,7 @@ async def get_billing_usage(input_data: BillingInput) -> dict[str, Any]:
 
 
 @mcp.tool()
-async def health_check_cli() -> dict[str, Any]:
+async def health_check() -> dict[str, Any]:
     """Check LangSmith MCP server health and configuration.
 
     Returns server status, configuration summary, and connectivity check.
