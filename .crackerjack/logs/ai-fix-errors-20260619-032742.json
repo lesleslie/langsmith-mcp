@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260619-032742",
+  "total_errors": 3,
+  "success_count": 13,
+  "total_count": 16,
+  "success_rate": 81.2,
+  "error_groups": {
+    "Max Retries Error": [
+      {
+        "type": "Max Retries Error",
+        "message": "Failed after 3 attempts: Timed out after 90s; Timed out after 90s; Timed out after 90s",
+        "file": "langsmith_mcp/client.py"
+      },
+      {
+        "type": "Max Retries Error",
+        "message": "Failed after 3 attempts: Timed out after 90s; Timed out after 90s; Timed out after 90s",
+        "file": "langsmith_mcp/main.py"
+      },
+      {
+        "type": "Max Retries Error",
+        "message": "Failed after 3 attempts: Timed out after 90s; Timed out after 90s; Timed out after 90s",
+        "file": "langsmith_mcp/main.py"
+      }
+    ]
+  }
+}

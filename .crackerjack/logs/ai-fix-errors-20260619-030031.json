@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260619-030031",
+  "total_errors": 3,
+  "success_count": 14,
+  "total_count": 17,
+  "success_rate": 82.4,
+  "error_groups": {
+    "Max Retries Error": [
+      {
+        "type": "Max Retries Error",
+        "message": "Failed after 3 attempts: Timed out after 90s; Attempt 2: Fix failed: Change 0: Planned old code did not match target range (searched \u00b110 lines); Attempt 3: Fix failed: Change 0: Planned old code did not match target range (searched \u00b110 lines)",
+        "file": "langsmith_mcp/__main__.py"
+      },
+      {
+        "type": "Max Retries Error",
+        "message": "Failed after 3 attempts: Timed out after 90s; Timed out after 90s; Timed out after 90s",
+        "file": "langsmith_mcp/main.py"
+      },
+      {
+        "type": "Max Retries Error",
+        "message": "Failed after 3 attempts: Timed out after 90s; Timed out after 90s; Timed out after 90s",
+        "file": "langsmith_mcp/main.py"
+      }
+    ]
+  }
+}

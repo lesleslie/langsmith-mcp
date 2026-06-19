@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """LangSmith MCP Server - Oneiric CLI Entry Point."""
 
+from __future__ import annotations
+
 from typing import Any, cast
 
 from mcp_common.cli import MCPServerCLIFactory
@@ -11,7 +13,8 @@ from oneiric.runtime.mcp_health import HealthStatus
 from langsmith_mcp.main import mcp, validate_api_key_at_startup
 
 
-class LangSmithConfig(OneiricMCPConfig):
+# type: ignore
+class LangSmithConfig(OneiricMCPConfig):  # type: ignore[misc]
     """LangSmith MCP Server Configuration."""
 
     http_port: int = 3048
@@ -27,7 +30,7 @@ class LangSmithConfig(OneiricMCPConfig):
 class LangSmithMCPServer(BaseOneiricServerMixin):
     """LangSmith MCP Server with Oneiric integration."""
 
-    def __init__(self, config: LangSmithConfig):
+    def __init__(self, config: LangSmithConfig) -> None:
         self.config = config  # type: ignore[assignment]
         self.mcp = mcp  # Use the existing FastMCP instance
 
@@ -87,7 +90,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         from langsmith_mcp.config import LangSmithSettings
 
         try:
-            settings = LangSmithSettings()
+            settings = LangSmithSettings()  # type: ignore
             api_key_available = bool(settings.api_key)
         except Exception:
             api_key_available = False

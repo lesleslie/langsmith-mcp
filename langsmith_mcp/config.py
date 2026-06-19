@@ -1,5 +1,6 @@
 """LangSmith MCP Server Configuration.
 
+from __future__ import annotations
 Uses mcp-common patterns with Oneiric layered configuration.
 """
 
@@ -19,7 +20,7 @@ class LangSmithSettings(MCPServerSettings):
     4. Environment variables LANGSMITH_*
     """
 
-    model_config = {
+    model_config = {  # type: ignore
         "env_prefix": "LANGSMITH_",
         "env_file": ".env",
         "extra": "ignore",
