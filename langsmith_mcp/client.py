@@ -3,8 +3,10 @@
 HTTP client for LangSmith API with retry logic and error handling.
 """
 
+from __future__ import annotations
+
 import logging
-from typing import Any
+from typing import Any, List, cast
 
 import httpx
 from mcp_common.exceptions import MCPServerError
@@ -41,7 +43,7 @@ class LangSmithClient:
     Handles authentication, retries, and error handling for all LangSmith operations.
     """
 
-    def __init__(self, settings: LangSmithSettings):
+    def __init__(self, settings: LangSmithSettings) -> None:
         self.settings = settings
         self._client: httpx.AsyncClient | None = None
 
@@ -124,7 +126,7 @@ class LangSmithClient:
                 json=json_data,
             )
             response.raise_for_status()
-            return response.json()
+            return cast(dict[str, Any], response.json())
 
         except httpx.HTTPStatusError as e:
             error_body = {}
@@ -286,11 +288,11 @@ class LangSmithClient:
         """
         params = {"limit": limit, "offset": offset}
         if project_id:
-            params["project_id"] = project_id
+            params["project_id"] = project_id  # type: ignore
         if trace_id:
-            params["trace_id"] = trace_id
+            params["trace_id"] = trace_id  # type: ignore
         if run_id:
-            params["id"] = run_id
+            params["id"] = run_id  # type: ignore
 
         return await self._request("GET", "/v1/runs", params=params)
 
@@ -442,7 +444,7 @@ class LangSmithClient:
         """
         params = {"limit": limit, "offset": offset}
         if dataset_id:
-            params["dataset_id"] = dataset_id
+            params["dataset_id"] = dataset_id  # type: ignore
 
         return await self._request("GET", "/v1/experiments", params=params)
 

@@ -3,15 +3,17 @@
 Provides MCP tools for LangSmith observability integration.
 """
 
+from __future__ import annotations
+
 import logging
 import sys
-from typing import Annotated, Any
+from typing import Annotated, Any, cast
 
 from fastmcp import FastMCP
 from mcp_common.exceptions import MCPServerError
 from pydantic import BaseModel, Field
 
-from langsmith_mcp.client import LangSmithAPIError
+from langsmith_mcp.client import LangSmithAPIError, LangSmithClient
 from langsmith_mcp.config import LangSmithSettings
 
 logger = logging.getLogger(__name__)
@@ -24,8 +26,10 @@ def get_settings() -> LangSmithSettings:
     """Get or create settings instance."""
     global _settings
     if _settings is None:
-        _settings = LangSmithSettings.load("langsmith")
-    return _settings
+        _settings = cast(LangSmithSettings, LangSmithSettings.load("langsmith"))
+    result = _settings
+    assert result is not None
+    return result
 
 
 def validate_api_key_at_startup() -> None:
@@ -205,10 +209,8 @@ class BillingInput(BaseModel):
 # =====================
 
 
-async def _get_client():
+async def _get_client() -> LangSmithClient:
     """Get or create LangSmith client."""
-    from langsmith_mcp.client import LangSmithClient
-
     settings = get_settings()
     client = LangSmithClient(settings)
     await client.initialize()
