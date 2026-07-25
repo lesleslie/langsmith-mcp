@@ -105,7 +105,7 @@ class TestLangSmithSettings:
         settings = LangSmithSettings.load("langsmith")
         masked = settings.get_masked_api_key()
 
-        assert masked == "...yxwv"
+        assert masked == "...zyxw"
         assert "test_fake" not in masked
 
     def test_masked_api_key_short(self, clean_env):

@@ -17,7 +17,7 @@ from langsmith_mcp.main import (
     get_experiment,
     get_prompt,
     get_thread_history,
-    health_check,
+    health_check_cli,
     list_datasets,
     list_examples,
     list_experiments,
@@ -99,7 +99,7 @@ class TestHealthCheck:
         mock_client.list_projects = AsyncMock(return_value={"projects": []})
 
         with patch("langsmith_mcp.main._get_client", return_value=mock_client):
-            result = await health_check()
+            result = await health_check_cli()
 
         assert result["status"] == "healthy"
         assert result["server"] == "langsmith-mcp"
@@ -113,7 +113,7 @@ class TestHealthCheck:
             "langsmith_mcp.main._get_client",
             side_effect=Exception("Connection failed"),
         ):
-            result = await health_check()
+            result = await health_check_cli()
 
         assert result["status"] == "degraded"
         assert "error" in result["connectivity"]
