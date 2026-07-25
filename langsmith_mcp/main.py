@@ -10,6 +10,7 @@ import sys
 from typing import Annotated, Any, cast
 
 from mcp_common.fastmcp import FastMCP
+from mcp_common.health import register_http_health_route
 from mcp_common.exceptions import MCPServerError
 from pydantic import BaseModel, Field
 
@@ -67,14 +68,7 @@ mcp = FastMCP(
 )
 
 
-# HTTP health endpoint for Claude Code compatibility
-@mcp.custom_route("/health", methods=["GET"])
-async def health_check(request: Any) -> Any:
-    """HTTP health check endpoint for Claude Code `mcp list` compatibility."""
-    from starlette.responses import JSONResponse
-
-    return JSONResponse({"status": "ok", "service": "langsmith", "version": "0.1.0"})
-
+register_http_health_route(mcp, service_name="langsmith", version="0.1.0")
 
 @mcp.custom_route("/healthz", methods=["GET"])
 async def healthz_check(request: Any) -> Any:

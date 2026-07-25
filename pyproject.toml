@@ -17,6 +17,9 @@ dependencies = [
 [tool.setuptools.packages.find]
 include = ["langsmith_mcp*"]
 
+[tool.uv.sources]
+mcp-common = { path = "../mcp-common", editable = true }
+
 [dependency-groups]
 dev = [
     "crackerjack>=0.49.0",
