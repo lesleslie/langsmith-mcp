@@ -9,7 +9,7 @@ import logging
 import sys
 from typing import Annotated, Any, cast
 
-from fastmcp import FastMCP
+from mcp_common.fastmcp import FastMCP
 from mcp_common.exceptions import MCPServerError
 from pydantic import BaseModel, Field
 
