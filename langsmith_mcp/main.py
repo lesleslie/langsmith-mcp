@@ -14,6 +14,7 @@ from mcp_common.health import register_http_health_route
 from mcp_common.exceptions import MCPServerError
 from pydantic import BaseModel, Field
 
+from langsmith_mcp import __version__
 from langsmith_mcp.client import LangSmithAPIError, LangSmithClient
 from langsmith_mcp.config import LangSmithSettings
 
@@ -68,7 +69,7 @@ mcp = FastMCP(
 )
 
 
-register_http_health_route(mcp, service_name="langsmith", version="0.1.0")
+register_http_health_route(mcp, service_name="langsmith", version=__version__)
 
 @mcp.custom_route("/healthz", methods=["GET"])
 async def healthz_check(request: Any) -> Any:
