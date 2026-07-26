@@ -5,6 +5,7 @@ Uses mcp-common patterns with Oneiric layered configuration.
 """
 
 import os
+from contextlib import suppress
 from pathlib import Path
 from typing import Annotated, Any, ClassVar
 
@@ -154,8 +155,14 @@ class LangSmithSettings(OneiricMCPConfig):
             env_prefix = cls.LEGACY_ENV_PREFIX
 
         data: dict[str, Any] = {"server_name": server_name}
+        cls._apply_yaml_layers(data, server_name)
+        cls._apply_env_overrides(data, env_prefix)
+        cls._apply_explicit_config(data, config_path)
+        return cls.model_validate(data)
 
-        # Layer 1: settings/{server_name}.yaml
+    @classmethod
+    def _apply_yaml_layers(cls, data: dict[str, Any], server_name: str) -> None:
+        """Layer 1 (server yaml) and Layer 2 (local yaml) into data."""
         server_yaml = Path("settings") / f"{server_name}.yaml"
         if server_yaml.exists():
             with server_yaml.open() as f:
@@ -163,7 +170,6 @@ class LangSmithSettings(OneiricMCPConfig):
             if isinstance(yaml_data, dict):
                 data.update(yaml_data)
 
-        # Layer 2: settings/local.yaml
         local_yaml = Path("settings") / "local.yaml"
         if local_yaml.exists():
             with local_yaml.open() as f:
@@ -171,29 +177,37 @@ class LangSmithSettings(OneiricMCPConfig):
             if isinstance(local_data, dict):
                 data.update(local_data)
 
-        # Layer 3: Environment variables
+    @classmethod
+    def _apply_env_overrides(cls, data: dict[str, Any], env_prefix: str) -> None:
+        """Layer 3: environment variables override YAML layers."""
         for field_name in cls.model_fields:
             env_var = f"{env_prefix}_{field_name.upper()}"
-            if env_var in os.environ:
-                env_value: str | Path | None = os.environ[env_var]
-                field_def = cls.model_fields[field_name]
-                field_type = field_def.annotation
-                field_args: tuple[Any, ...] = ()
-                try:
-                    from typing import get_args as _get_args
+            if env_var not in os.environ:
+                continue
+            data[field_name] = cls._coerce_env_value(field_name, os.environ[env_var])
 
-                    field_args = _get_args(field_type)
-                except Exception:
-                    pass
-                if field_type is Path or (field_args and Path in field_args):
-                    env_value = Path(env_value) if env_value else None
-                data[field_name] = env_value
+    @classmethod
+    def _coerce_env_value(cls, field_name: str, raw: str) -> Any:
+        """Coerce an env-var string to the field's annotated Python type."""
+        field_def = cls.model_fields[field_name]
+        field_type = field_def.annotation
+        field_args: tuple[Any, ...] = ()
+        with suppress(Exception):
+            from typing import get_args as _get_args
 
-        # Layer 4: Explicit config path (highest priority)
-        if config_path is not None and config_path.exists():
-            with config_path.open() as f:
-                explicit_data = yaml.safe_load(f)
-            if isinstance(explicit_data, dict):
-                data.update(explicit_data)
+            field_args = _get_args(field_type)
+        if field_type is Path or (field_args and Path in field_args):
+            return Path(raw) if raw else None
+        return raw
 
-        return cls.model_validate(data)
+    @classmethod
+    def _apply_explicit_config(
+        cls, data: dict[str, Any], config_path: Path | None
+    ) -> None:
+        """Layer 4: explicit config_path is the highest-priority source."""
+        if config_path is None or not config_path.exists():
+            return
+        with config_path.open() as f:
+            explicit_data = yaml.safe_load(f)
+        if isinstance(explicit_data, dict):
+            data.update(explicit_data)
