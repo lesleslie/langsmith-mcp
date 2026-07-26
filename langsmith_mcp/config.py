@@ -5,7 +5,6 @@ Uses mcp-common patterns with Oneiric layered configuration.
 """
 
 import os
-from contextlib import suppress
 from pathlib import Path
 from typing import Annotated, Any, ClassVar
 
@@ -189,13 +188,11 @@ class LangSmithSettings(OneiricMCPConfig):
     @classmethod
     def _coerce_env_value(cls, field_name: str, raw: str) -> Any:
         """Coerce an env-var string to the field's annotated Python type."""
+        from typing import get_args
+
         field_def = cls.model_fields[field_name]
         field_type = field_def.annotation
-        field_args: tuple[Any, ...] = ()
-        with suppress(Exception):
-            from typing import get_args as _get_args
-
-            field_args = _get_args(field_type)
+        field_args: tuple[Any, ...] = get_args(field_type) if field_type else ()
         if field_type is Path or (field_args and Path in field_args):
             return Path(raw) if raw else None
         return raw
