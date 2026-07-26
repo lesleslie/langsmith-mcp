@@ -8,7 +8,7 @@ from typing import Any, cast
 from mcp_common.cli import MCPServerCLIFactory
 from mcp_common.server import BaseOneiricServerMixin, create_runtime_components
 from oneiric.core.config import OneiricMCPConfig
-from oneiric.runtime.mcp_health import HealthStatus
+from oneiric.runtime.mcp_health import HealthCheckResponse, HealthStatus
 
 from langsmith_mcp.main import mcp, validate_api_key_at_startup
 
@@ -80,7 +80,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
 
         print("👋 LangSmith MCP Server shutdown complete")
 
-    async def health_check(self) -> dict[str, Any]:
+    async def health_check(self) -> HealthCheckResponse:
         """Perform health check."""
         # Build base health components using mixin helper
         base_components = await self._build_health_components()
@@ -105,7 +105,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         )
 
         # Create health response
-        return self.runtime.health_monitor.create_health_response(base_components)  # type: ignore[no-any-return]
+        return self.runtime.health_monitor.create_health_response(base_components)
 
     def get_app(self) -> Any:
         """Get the ASGI application."""
