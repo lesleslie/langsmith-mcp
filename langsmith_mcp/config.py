@@ -24,7 +24,7 @@ class LangSmithSettings(OneiricMCPConfig):
     4. Environment variables LANGSMITH_*
     """
 
-    model_config = {  # type: ignore
+    model_config = {
         "env_prefix": "LANGSMITH_",
         "env_file": ".env",
         "extra": "ignore",

@@ -6,7 +6,7 @@ HTTP client for LangSmith API with retry logic and error handling.
 from __future__ import annotations
 
 import logging
-from typing import Any, List, cast
+from typing import Any, cast
 
 import httpx
 from mcp_common.exceptions import MCPServerError
@@ -47,7 +47,7 @@ class LangSmithClient:
         self.settings = settings
         self._client: httpx.AsyncClient | None = None
 
-    async def __aenter__(self) -> "LangSmithClient":
+    async def __aenter__(self) -> LangSmithClient:
         """Initialize async context."""
         await self.initialize()
         return self
@@ -288,11 +288,11 @@ class LangSmithClient:
         """
         params = {"limit": limit, "offset": offset}
         if project_id:
-            params["project_id"] = project_id  # type: ignore
+            params["project_id"] = project_id
         if trace_id:
-            params["trace_id"] = trace_id  # type: ignore
+            params["trace_id"] = trace_id
         if run_id:
-            params["id"] = run_id  # type: ignore
+            params["id"] = run_id
 
         return await self._request("GET", "/v1/runs", params=params)
 
@@ -444,7 +444,7 @@ class LangSmithClient:
         """
         params = {"limit": limit, "offset": offset}
         if dataset_id:
-            params["dataset_id"] = dataset_id  # type: ignore
+            params["dataset_id"] = dataset_id
 
         return await self._request("GET", "/v1/experiments", params=params)
 

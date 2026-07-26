@@ -13,8 +13,7 @@ from oneiric.runtime.mcp_health import HealthStatus
 from langsmith_mcp.main import mcp, validate_api_key_at_startup
 
 
-# type: ignore
-class LangSmithConfig(OneiricMCPConfig):  # type: ignore[misc]
+class LangSmithConfig(OneiricMCPConfig):
     """LangSmith MCP Server Configuration."""
 
     http_port: int = 3048
@@ -31,7 +30,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
     """LangSmith MCP Server with Oneiric integration."""
 
     def __init__(self, config: LangSmithConfig) -> None:
-        self.config = config  # type: ignore[assignment]
+        self.config = config  # ty: ignore[invalid-assignment]
         self.mcp = mcp  # Use the existing FastMCP instance
 
         # Initialize runtime components using mcp-common helper
@@ -90,7 +89,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         from langsmith_mcp.config import LangSmithSettings
 
         try:
-            settings = LangSmithSettings()  # type: ignore
+            settings = LangSmithSettings()
             api_key_available = bool(settings.api_key)
         except Exception:
             api_key_available = False
@@ -106,7 +105,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         )
 
         # Create health response
-        return self.runtime.health_monitor.create_health_response(base_components)  # type: ignore
+        return self.runtime.health_monitor.create_health_response(base_components)
 
     def get_app(self) -> Any:
         """Get the ASGI application."""
