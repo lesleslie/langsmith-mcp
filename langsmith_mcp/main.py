@@ -7,11 +7,11 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import Annotated, Any, cast
+from typing import Annotated, Any
 
+from mcp_common.exceptions import MCPServerError
 from mcp_common.fastmcp import FastMCP
 from mcp_common.health import register_http_health_route
-from mcp_common.exceptions import MCPServerError
 from pydantic import BaseModel, Field
 
 from langsmith_mcp import __version__
@@ -28,7 +28,7 @@ def get_settings() -> LangSmithSettings:
     """Get or create settings instance."""
     global _settings
     if _settings is None:
-        _settings = cast(LangSmithSettings, LangSmithSettings.load("langsmith"))
+        _settings = LangSmithSettings.load("langsmith")
     result = _settings
     assert result is not None
     return result
@@ -70,6 +70,7 @@ mcp = FastMCP(
 
 
 register_http_health_route(mcp, service_name="langsmith", version=__version__)
+
 
 @mcp.custom_route("/healthz", methods=["GET"])
 async def healthz_check(request: Any) -> Any:

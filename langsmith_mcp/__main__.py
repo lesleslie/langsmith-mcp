@@ -89,7 +89,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         from langsmith_mcp.config import LangSmithSettings
 
         try:
-            settings = LangSmithSettings()
+            settings = LangSmithSettings()  # ty: ignore[call-arg]
             api_key_available = bool(settings.api_key)
         except Exception:
             api_key_available = False
@@ -105,7 +105,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         )
 
         # Create health response
-        return self.runtime.health_monitor.create_health_response(base_components)
+        return self.runtime.health_monitor.create_health_response(base_components)  # type: ignore[no-any-return]
 
     def get_app(self) -> Any:
         """Get the ASGI application."""
