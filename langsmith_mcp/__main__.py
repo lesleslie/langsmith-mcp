@@ -89,7 +89,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         from langsmith_mcp.config import LangSmithSettings
 
         try:
-            settings = LangSmithSettings()  # ty: ignore[call-arg]
+            settings = LangSmithSettings()  # ty: ignore[missing-argument]
             api_key_available = bool(settings.api_key)
         except Exception:
             api_key_available = False
