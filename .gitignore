@@ -73,6 +73,7 @@ uv.lock
 # Backup Files (added by gitignore audit)
 # ============================================================================
 *.backup
+*.backup.json
 *.bak
 /.backups/
 /.backup/
