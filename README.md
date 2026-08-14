@@ -18,7 +18,7 @@ MCP server for [LangSmith](https://www.langchain.com/langsmith) observability in
 | **Datasets** | `list_datasets`, `get_dataset`, `list_examples`, `create_dataset`, `create_examples` | Evaluation datasets management |
 | **Experiments** | `list_experiments`, `get_experiment` | A/B testing and evaluation results |
 | **Billing** | `get_billing_usage` | Cost tracking and usage metrics |
-| **Health** | `health_check` | Server health and connectivity status |
+| **Health** | `health_check_cli` | Server health and connectivity status |
 
 ## Installation
 
@@ -34,13 +34,40 @@ pip install -e .
 
 ### Environment Variables
 
+The server reads two distinct env-var families:
+
+- **`LANGSMITH_*`** — application config (consumed by `LangSmithSettings` in `langsmith_mcp/config.py`)
+- **`LANGSMITH_MCP_*`** — HTTP server lifecycle (consumed by `LangSmithConfig` in `langsmith_mcp/__main__.py`)
+
+#### Application config (`LANGSMITH_*`)
+
 ```bash
 # Required
 export LANGSMITH_API_KEY="your-api-key-here"
 
-# Optional
+# Optional — application config
 export LANGSMITH_WORKSPACE_ID="your-workspace-id"
 export LANGSMITH_API_ENDPOINT="https://api.smith.langchain.com"
+
+# Pagination defaults
+export LANGSMITH_MAX_CHARS_PER_PAGE=25000     # 1000..100000
+export LANGSMITH_PREVIEW_CHARS=100            # 50..500
+
+# Feature toggles (set / unset to enable / disable)
+export LANGSMITH_FEATURES_ENABLED="conversation,prompts,traces,datasets,experiments,billing"
+
+# HTTP client behavior
+export LANGSMITH_HTTP_TIMEOUT=30.0            # 5.0..120.0 seconds
+export LANGSMITH_MAX_RETRIES=3                # 0..5
+```
+
+#### HTTP server lifecycle (`LANGSMITH_MCP_*`)
+
+```bash
+# Optional — HTTP transport (mcp-common MCPServerCLIFactory)
+export LANGSMITH_MCP_HTTP_PORT=3048
+export LANGSMITH_MCP_HTTP_HOST="127.0.0.1"
+export LANGSMITH_MCP_ENABLE_HTTP_TRANSPORT=true
 ```
 
 ### Configuration File
@@ -51,8 +78,9 @@ Edit `settings/langsmith.yaml` for persistent configuration:
 server_name: "LangSmith MCP Server"
 api_endpoint: "https://api.smith.langchain.com"
 
-pagination:
-  max_chars_per_page: 25000
+# Pagination (flat top-level keys — there is no `pagination:` namespace)
+max_chars_per_page: 25000
+preview_chars: 100
 
 features_enabled:
   - conversation
@@ -61,6 +89,15 @@ features_enabled:
   - datasets
   - experiments
   - billing
+
+# HTTP client configuration
+http_timeout: 30.0
+max_retries: 3
+
+# HTTP server (read by `LANGSMITH_MCP_*` env vars / pyproject [tool.langsmith-mcp])
+http_port: 3048
+http_host: "127.0.0.1"
+enable_http_transport: true
 ```
 
 ## Usage
@@ -194,8 +231,13 @@ pytest --cov=langsmith_mcp
 ```bash
 ruff check langsmith_mcp/
 ruff format langsmith_mcp/
-pyright langsmith_mcp/
 ```
+
+> **Note:** `pyright langsmith_mcp/` is intentionally omitted — this repo does
+> not configure `[tool.pyright]` or `pyrightconfig.json`, and running it
+> against the source tree will fail with "no configuration found". Type
+> checking is delegated to `mypy` (see `mypy.ini`) and `ty` (crackerjack
+> gate), not `pyright`.
 
 ## Architecture
 
