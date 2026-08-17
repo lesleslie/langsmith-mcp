@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
+from mcp_common.exceptions import MCPServerError
 
 from langsmith_mcp.client import LangSmithAPIError, LangSmithClient
 from langsmith_mcp.config import LangSmithSettings
@@ -103,7 +104,7 @@ class TestLangSmithClient:
         """Test _get_client raises error when not initialized."""
         client = LangSmithClient(settings)
 
-        with pytest.raises(Exception):  # MCPServerError
+        with pytest.raises(MCPServerError):
             client._get_client()
 
 

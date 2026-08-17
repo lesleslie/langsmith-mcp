@@ -653,7 +653,7 @@ async def health_check_cli() -> dict[str, Any]:
     return {
         "status": "healthy" if connectivity == "ok" else "degraded",
         "server": "langsmith-mcp",
-        "version": "0.1.0",
+        "version": __version__,
         "config": {
             "endpoint": settings.api_endpoint,
             "api_key_masked": settings.get_masked_api_key(),

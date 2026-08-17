@@ -1,6 +1,6 @@
 [project]
 name = "langsmith-mcp"
-version = "0.2.0"
+version = "0.2.1"
 description = "MCP server for LangSmith observability - traces, prompts, datasets, and experiments"
 authors = [
     { name = "Les Leslie", email = "les@wedgwoodwebworks.com" },
@@ -55,6 +55,7 @@ extend-select = [
 ignore = [
     "E402",
     "F821",
+    "BLE001",
 ]
 fixable = ["ALL"]
 

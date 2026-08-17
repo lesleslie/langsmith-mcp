@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import Any, ClassVar, cast
 
 from mcp_common.cli import MCPServerCLIFactory
 from mcp_common.server import BaseOneiricServerMixin, create_runtime_components
@@ -20,7 +20,7 @@ class LangSmithConfig(OneiricMCPConfig):
     http_host: str = "127.0.0.1"
     enable_http_transport: bool = True
 
-    model_config = {
+    model_config: ClassVar[dict[str, Any]] = {
         "env_prefix": "LANGSMITH_MCP_",
         "env_file": ".env",
     }
@@ -91,7 +91,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         try:
             settings = LangSmithSettings()  # ty: ignore[missing-argument]
             api_key_available = bool(settings.api_key)
-        except Exception:
+        except (ValueError, TypeError, ImportError):
             api_key_available = False
 
         base_components.append(

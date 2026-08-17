@@ -6,7 +6,8 @@ HTTP client for LangSmith API with retry logic and error handling.
 from __future__ import annotations
 
 import logging
-from typing import Any, cast
+from types import TracebackType
+from typing import Any, Self, cast
 
 import httpx
 from mcp_common.exceptions import MCPServerError
@@ -47,12 +48,17 @@ class LangSmithClient:
         self.settings = settings
         self._client: httpx.AsyncClient | None = None
 
-    async def __aenter__(self) -> LangSmithClient:
+    async def __aenter__(self) -> Self:
         """Initialize async context."""
         await self.initialize()
         return self
 
-    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         """Cleanup async context."""
         await self.close()
 

@@ -23,7 +23,7 @@ class LangSmithSettings(OneiricMCPConfig):
     4. Environment variables LANGSMITH_*
     """
 
-    model_config = {
+    model_config: ClassVar[dict[str, Any]] = {
         "env_prefix": "LANGSMITH_",
         "env_file": ".env",
         "extra": "ignore",

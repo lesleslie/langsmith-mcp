@@ -130,7 +130,9 @@ class TestLangSmithSettings:
 
     def test_missing_api_key(self, clean_env):
         """Test that missing API key raises validation error."""
-        with pytest.raises(Exception):  # Pydantic ValidationError
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
             LangSmithSettings.load("langsmith")
 
     def test_custom_features_enabled(self, clean_env):
