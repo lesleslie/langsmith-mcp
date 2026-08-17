@@ -79,3 +79,16 @@ uv.lock
 /.backup/
 .backups/
 .backup/
+.crackerjack/
+.crackerjack/outputs/
+.crackerjack-state/
+.crackerjack-hooks-updated/
+.crackerjack-mcp/
+*.bak2
+*.backup.*
+.coverage*
+coverage.json
+*.pyc
+*.pyo
+*.pyd
+example.mcp.json
