@@ -4,8 +4,8 @@ Covers W0 dispatch surface (mcp_common 0.18.0+):
 - 2-tier mapping (MINIMAL/FULL)
 - AST guards: no bare @mcp.tool() decorators, no sync apply_tool_profile
   call from the main entrypoint
-- MANDATORY_TOOLS invariant (vacuously satisfied — no MCP-registered
-  health tools, only the /healthz HTTP route)
+- MANDATORY_TOOLS invariant (vacuously satisfied — no tools are
+  mandatory at any profile level)
 - Real production-path test: await create_app() exercises the async
   helper directly (W2b.3 spline lesson)
 - Behavioral parity: W0 path produces the same tool set as the
