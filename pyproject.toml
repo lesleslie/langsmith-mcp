@@ -8,7 +8,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "fastmcp>=3.4.0,<4",
-    "mcp-common>=0.17.0",
+    "mcp-common>=0.18.0",
     "oneiric>=0.16.0",
     "httpx>=0.28.0",
     "pydantic>=2.12.5",

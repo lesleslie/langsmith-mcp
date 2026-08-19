@@ -179,6 +179,58 @@ if settings.is_feature_enabled("billing"):
 
 ## MCP Tool Categories
 
+### Tool Profile System
+
+Tool registration is gated by the `LANGSMITH_TOOL_PROFILE` env var via
+the W0 dispatch surface from `mcp_common.tools.dispatch` (>=0.18.0).
+The default is `full` (all 15 tools). See
+`docs/architecture/tool-profile-rationale.md` for the full rationale.
+
+| Profile | Behavior |
+|---------|----------|
+| `minimal` | No MCP-registered tool groups. Only the `discover_tools` meta-tool from the W0 helper. Useful for control-plane / health-probe deployments. |
+| `full` (default) | All 15 langsmith tools + `discover_tools`. Matches pre-refactor behavior. |
+
+**Production path uses the async helper** (W2b.3 spline lesson): the
+dispatch is triggered via `apply_langsmith_tool_profile(mcp)` which
+`await`s `_apply_tool_profile`. The sync `apply_tool_profile` wrapper
+is used only in `_ensure_dispatched_sync()` as a shim for CLI startup.
+
+**Dispatch is lazy**, not at module import. Running
+`asyncio.run(...)` at module import would break pytest-asyncio.
+Instead:
+
+- `get_app()` triggers the sync wrapper on first call (CLI startup,
+  uvicorn factory)
+- `create_app()` (async) `await`s the async helper on first call
+  (tests, async startup hooks)
+
+A `_dispatch_done` sentinel ensures the profile applies exactly once
+per process. `mcp` is exposed via `__getattr__` as a lazy attribute
+so legacy `from langsmith_mcp.main import mcp` callers get the
+post-dispatch instance.
+
+Each tool group has a dedicated `register_<group>_tools(server)`
+function in `main.py`. The function re-registers the module-level
+async function on the FastMCP server via `server.tool(name=...)`.
+The 7 groups are:
+
+| Group | Tools |
+|-------|-------|
+| `thread_history_tools` | `get_thread_history` |
+| `prompt_tools` | `list_prompts`, `get_prompt`, `push_prompt` |
+| `trace_tools` | `fetch_runs`, `list_projects` |
+| `dataset_tools` | `list_datasets`, `get_dataset`, `list_examples`, `create_dataset`, `create_examples` |
+| `experiment_tools` | `list_experiments`, `get_experiment` |
+| `billing_tools` | `get_billing_usage` |
+| `health_tools` | `health_check_cli` |
+
+To add a new tool: define the async function and the input model in
+`main.py` (undecorated), then re-bind it in the appropriate
+`register_<group>_tools(server)` function via
+`server.tool(name="...")(my_func)`. The dispatch surface picks it up
+automatically.
+
 ### Conversation History (1 tool)
 
 - `get_thread_history` - Retrieve threaded messages with pagination
@@ -233,10 +285,10 @@ async def new_operation(self, param: str) -> dict[str, Any]:
     return await self._request("GET", f"/v1/endpoint/{param}")
 ```
 
-3. Create MCP tool in `main.py`:
+3. Create the async function in `main.py` (undecorated — the W0
+   dispatch handles registration):
 
 ```python
-@mcp.tool()
 async def new_tool(input_data: NewToolInput) -> dict[str, Any]:
     try:
         client = await _get_client()
@@ -245,6 +297,17 @@ async def new_tool(input_data: NewToolInput) -> dict[str, Any]:
             return {"status": "success", "data": result}
     except Exception as e:
         return _handle_error(e, "new_tool")
+```
+
+4. Bind it in the appropriate `register_<group>_tools(server)`
+   function in `main.py`:
+
+```python
+def register_prompt_tools(server: FastMCP) -> None:
+    server.tool(name="list_prompts")(list_prompts)
+    server.tool(name="get_prompt")(get_prompt)
+    server.tool(name="push_prompt")(push_prompt)
+    server.tool(name="new_tool")(new_tool)  # ← new
 ```
 
 ### Updating Configuration
