@@ -55,16 +55,16 @@ def test_main_has_no_bare_mcp_tool_decorators() -> None:
     )
 
 
-def test_main_does_not_call_sync_apply_tool_profile() -> None:
-    """The W0 production path MUST use the async helper
+def test_profiles_uses_async_helper_not_sync_wrapper() -> None:
+    """The W0 production path in ``profiles.py`` MUST use the async helper
     ``apply_langsmith_tool_profile`` (which awaits
     ``_apply_tool_profile``) — NOT the sync ``apply_tool_profile``
     wrapper (which raises ``RuntimeError`` in async contexts).
 
-    The sync wrapper IS allowed in ``_ensure_dispatched_sync`` as a
-    sync-only entry point for CLI startup, but the production W0 path
-    lives in ``langsmith_mcp/tools/profiles.py`` and goes through the
-    async helper. This AST guard checks the production W0 path.
+    The sync wrapper IS allowed in ``langsmith_mcp.main._ensure_dispatched_sync``
+    as a sync-only entry point for CLI startup, but the production W0
+    path lives in ``langsmith_mcp/tools/profiles.py`` and goes through
+    the async helper. This AST guard checks the production W0 path.
     """
     profiles_py = REPO_ROOT / "langsmith_mcp" / "tools" / "profiles.py"
     tree = ast.parse(profiles_py.read_text())
@@ -106,38 +106,27 @@ def test_main_invokes_async_apply_langsmith_tool_profile() -> None:
     """The production path awaits the W0 helper.
 
     This is the W2b.3 spline keystone: tests that mock the dispatch
-    helper can mask a real production bug. We assert (a) the helper is
-    imported, and (b) at least one ``apply_langsmith_tool_profile`` call
-    site exists, and (c) at the module-load dispatch it is awaited via
-    ``asyncio.run(...)`` (since module import is sync).
+    helper can mask a real production bug. We structurally assert that
+    the call site is wrapped in ``ast.Await`` (i.e.
+    ``await apply_langsmith_tool_profile(server)``), not just a bare
+    call. A bare call would silently run the coroutine and discard the
+    result, dropping the dispatch.
     """
     tree = _parse_main()
-    calls = []
-    for node in ast.walk(tree):
+    awaited_calls = [
+        node
+        for node in ast.walk(tree)
         if (
-            isinstance(node, ast.Call)
-            and isinstance(node.func, ast.Name)
-            and node.func.id == "apply_langsmith_tool_profile"
-        ):
-            calls.append(node)
-    assert calls, (
-        "main.py must call apply_langsmith_tool_profile(...) at least once."
-    )
-    # At least one call must be wrapped in asyncio.run (module-load dispatch).
-    [
-        c
-        for c in calls
-        if isinstance(c.parent if hasattr(c, "parent") else None, ast.Await)
+            isinstance(node, ast.Await)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "apply_langsmith_tool_profile"
+        )
     ]
-    # The simpler check: find asyncio.run(apply_langsmith_tool_profile(...))
-    # pattern in the source.
-    has_asyncio_run_dispatch = any(
-        isinstance(c.func, ast.Name) and c.func.id == "apply_langsmith_tool_profile"
-        for c in calls
-    )
-    assert has_asyncio_run_dispatch, (
-        "main.py must invoke apply_langsmith_tool_profile() so the W0 "
-        "dispatch actually runs at module import."
+    assert awaited_calls, (
+        "main.py must `await apply_langsmith_tool_profile(...)` at least "
+        "once (W2b.3 spline keystone — the production W0 path goes through "
+        "the async helper, not the sync wrapper)."
     )
 
 
@@ -200,10 +189,11 @@ def test_registration_map_resolves_all_seven_keys() -> None:
 
 
 def test_mandatory_and_essential_invariants_held() -> None:
-    """langsmith-mcp has no MCP-registered health tools (only /healthz
-    HTTP route via mcp_common.health), so MANDATORY_GROUPS /
-    MANDATORY_TOOLS subsets are vacuous. Profiles pass empty sets
-    explicitly to opt out of the subset check (W0 spec)."""
+    """No tools are mandatory at any profile level for langsmith-mcp —
+    every tool group (including ``health_tools``) is opt-in per
+    profile. The MANDATORY_GROUPS / MANDATORY_TOOLS subsets are
+    therefore vacuous; profiles pass empty sets explicitly to opt out
+    of the subset check (W0 spec)."""
     import inspect
 
     from langsmith_mcp.tools.profiles import apply_langsmith_tool_profile
@@ -211,11 +201,11 @@ def test_mandatory_and_essential_invariants_held() -> None:
     src = inspect.getsource(apply_langsmith_tool_profile)
     assert "mandatory_groups=set()" in src, (
         "apply_langsmith_tool_profile must pass empty mandatory_groups "
-        "since langsmith-mcp has no MCP-registered health tools."
+        "since no tools are mandatory at any profile level."
     )
     assert "essential_tool_names=set()" in src, (
         "apply_langsmith_tool_profile must pass empty essential_tool_names "
-        "since langsmith-mcp has no MCP-registered health tools."
+        "since no tools are mandatory at any profile level."
     )
 
 

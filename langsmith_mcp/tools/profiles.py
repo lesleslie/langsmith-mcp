@@ -33,16 +33,26 @@ if TYPE_CHECKING:
 
     from fastmcp import FastMCP
 
+# Canonical list of every register_<group>_tools group key + the matching
+# attribute name on ``langsmith_mcp.main``. The order matches the
+# pre-refactor decorator registration order in ``main.py`` and is
+# preserved across all three call sites
+# (FULL_REGISTRATIONS, _build_registration_map, register_all_tool_groups)
+# so adding a new group requires editing only this constant.
+_GROUP_REGISTRY: list[tuple[str, str]] = [
+    ("thread_history_tools", "register_thread_history_tools"),
+    ("prompt_tools", "register_prompt_tools"),
+    ("trace_tools", "register_trace_tools"),
+    ("dataset_tools", "register_dataset_tools"),
+    ("experiment_tools", "register_experiment_tools"),
+    ("billing_tools", "register_billing_tools"),
+    ("health_tools", "register_health_tools"),
+]
+
 MINIMAL_REGISTRATIONS: list[str | Callable[[FastMCP], Awaitable[None] | None]] = []
 
 FULL_REGISTRATIONS: list[str | Callable[[FastMCP], Awaitable[None] | None]] = [
-    "thread_history_tools",
-    "prompt_tools",
-    "trace_tools",
-    "dataset_tools",
-    "experiment_tools",
-    "billing_tools",
-    "health_tools",
+    key for key, _ in _GROUP_REGISTRY
 ]
 
 PROFILE_REGISTRATIONS: dict[
@@ -70,24 +80,11 @@ def _build_registration_map() -> dict[
     argument matching the W0 helper's expected signature, so no lambda
     binding is required (the W3.1 graphics-mcp lesson does not apply).
     """
-    from langsmith_mcp.main import (
-        register_billing_tools,
-        register_dataset_tools,
-        register_experiment_tools,
-        register_health_tools,
-        register_prompt_tools,
-        register_thread_history_tools,
-        register_trace_tools,
-    )
+    from langsmith_mcp import main as _main
 
     return {
-        "thread_history_tools": register_thread_history_tools,
-        "prompt_tools": register_prompt_tools,
-        "trace_tools": register_trace_tools,
-        "dataset_tools": register_dataset_tools,
-        "experiment_tools": register_experiment_tools,
-        "billing_tools": register_billing_tools,
-        "health_tools": register_health_tools,
+        key: getattr(_main, attr_name)
+        for key, attr_name in _GROUP_REGISTRY
     }
 
 
@@ -96,28 +93,14 @@ def register_all_tool_groups(server: FastMCP) -> None:
 
     Used as ``register_all_fn`` for the W0 helper. Imports each
     ``register_<group>_tools`` directly (not via ``REGISTRATION_MAP``
-    iteration) so that adding a new group requires editing both this
-    function and the ``FULL_REGISTRATIONS`` list — the redundancy is
-    intentional: each is the ground-truth for a separate concern
+    iteration) so that adding a new group requires editing only the
+    ``_GROUP_REGISTRY`` constant — the canonical source of truth
     (matches the W2a Crackerjack pattern).
     """
-    from langsmith_mcp.main import (
-        register_billing_tools,
-        register_dataset_tools,
-        register_experiment_tools,
-        register_health_tools,
-        register_prompt_tools,
-        register_thread_history_tools,
-        register_trace_tools,
-    )
+    from langsmith_mcp import main as _main
 
-    register_thread_history_tools(server)
-    register_prompt_tools(server)
-    register_trace_tools(server)
-    register_dataset_tools(server)
-    register_experiment_tools(server)
-    register_billing_tools(server)
-    register_health_tools(server)
+    for _key, attr_name in _GROUP_REGISTRY:
+        getattr(_main, attr_name)(server)
 
 
 async def apply_langsmith_tool_profile(server: FastMCP) -> None:
@@ -130,11 +113,11 @@ async def apply_langsmith_tool_profile(server: FastMCP) -> None:
     context, so this async path is the only correct entry point — the
     W2b.3 spline lesson is the keystone of this rule.
 
-    langsmith-mcp exposes no MCP-registered health tools (only the
-    /healthz HTTP route via ``mcp_common.health.register_http_health_route``),
-    so the MANDATORY_GROUPS / MANDATORY_TOOLS invariants are vacuously
-    satisfied. We pass empty sets explicitly to opt out of the subset
-    check.
+    No tools are mandatory at any profile level for langsmith-mcp —
+    every tool group (including ``health_tools``) is opt-in per
+    profile. The MANDATORY_GROUPS / MANDATORY_TOOLS invariants are
+    therefore vacuous; we pass empty sets explicitly to opt out of
+    the subset check.
     """
     from mcp_common.tools.dispatch import _apply_tool_profile
 
@@ -153,6 +136,7 @@ __all__ = [
     "FULL_REGISTRATIONS",
     "MINIMAL_REGISTRATIONS",
     "PROFILE_REGISTRATIONS",
+    "_GROUP_REGISTRY",
     "_build_registration_map",
     "apply_langsmith_tool_profile",
     "register_all_tool_groups",

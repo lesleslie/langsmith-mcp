@@ -87,10 +87,17 @@ per process. Reloading the module resets the sentinel so a new
 
 ### MANDATORY_GROUPS / MANDATORY_TOOLS = `set()`
 
-langsmith-mcp has no MCP-registered health tools (only the `/healthz`
-HTTP route via `mcp_common.health.register_http_health_route`). The
-W0 helper's mandatory-group and essential-tool subset checks are
-therefore vacuous; we pass empty sets explicitly to opt out.
+No tools are mandatory at any profile level for langsmith-mcp —
+every tool group (including `health_tools` and the `health_check_cli`
+MCP-registered health tool) is opt-in per profile. The W0 helper's
+mandatory-group and essential-tool subset checks are therefore
+vacuous; we pass empty sets explicitly to opt out.
+
+The `/healthz` HTTP route registered via
+`mcp_common.health.register_http_health_route` is independent of the
+W0 profile dispatch — it lives on the FastMCP app directly, not on
+the MCP tool registry, and is always available regardless of
+`LANGSMITH_TOOL_PROFILE`.
 
 ### `register_<group>_tools(server)` Functions
 
