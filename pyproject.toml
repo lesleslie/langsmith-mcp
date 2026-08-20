@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "langsmith-mcp"
 version = "0.2.1"
@@ -14,8 +18,8 @@ dependencies = [
     "pydantic>=2.12.5",
 ]
 
-[tool.setuptools.packages.find]
-include = ["langsmith_mcp*"]
+[tool.hatch.build.targets.wheel]
+packages = ["langsmith_mcp"]
 
 [tool.uv.sources]
 mcp-common = { path = "../mcp-common", editable = true }
