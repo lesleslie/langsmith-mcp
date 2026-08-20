@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "langsmith-mcp"
-version = "0.2.1"
+version = "0.3.0"
 description = "MCP server for LangSmith observability - traces, prompts, datasets, and experiments"
 authors = [
     { name = "Les Leslie", email = "les@wedgwoodwebworks.com" },

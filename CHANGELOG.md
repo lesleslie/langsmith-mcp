@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-08-20
+
+### Added
+
+- langsmith: Bodai plugin conversion (manifest, mcp.json, slash commands)
+- tools: Adopt W0 _apply_tool_profile dispatch (Tier-B 2-tier)
+
+### Changed
+
+- langsmith-mcp: Migrate build backend setuptools → hatchling
+
+### Fixed
+
+- langsmith-mcp: Correct stale module-level docstring in test_tool_profile.py
+- langsmith-mcp: Round 1 review fixes for W3.2 tool profile adoption
+- langsmith-mcp: Untrack .pyscn/reports/ artifacts
+
+### Internal
+
+- Gitignore runtime artifacts + untrack user-authorized cache files (bodai cleanup 2026-08-17)
+- gitignore: Untrack .pyscn/ (bodai 2026-08-20)
+- langsmith-mcp: Bootstrap [tool.crackerjack] section + uv sync upgrade
+- langsmith-mcp: Gitignore .lycheecache (file, not just dir)
+- langsmith-mcp: Gitignore .lycheecache + .hypothesis
+- langsmith-mcp: Untrack .lycheecache + .hypothesis runtime artifacts
+
 ## [0.2.1] - 2026-08-17
 
 ### Documentation
