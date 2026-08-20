@@ -64,9 +64,7 @@ PROFILE_REGISTRATIONS: dict[
 }
 
 
-def _build_registration_map() -> dict[
-    str, Callable[[FastMCP], Awaitable[None] | None]
-]:
+def _build_registration_map() -> dict[str, Callable[[FastMCP], Awaitable[None] | None]]:
     """Build the {group_key: register_fn(app)} map.
 
     Local imports keep ``langsmith_mcp.tools.profiles`` importable without
@@ -82,10 +80,7 @@ def _build_registration_map() -> dict[
     """
     from langsmith_mcp import main as _main
 
-    return {
-        key: getattr(_main, attr_name)
-        for key, attr_name in _GROUP_REGISTRY
-    }
+    return {key: getattr(_main, attr_name) for key, attr_name in _GROUP_REGISTRY}
 
 
 def register_all_tool_groups(server: FastMCP) -> None:
