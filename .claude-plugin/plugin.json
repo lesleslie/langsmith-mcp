@@ -1,0 +1,17 @@
+{
+  "author": {
+    "name": "Bodai"
+  },
+  "description": "Bodai plugin for the langsmith-mcp LangSmith observability server.",
+  "keywords": [
+    "bodai",
+    "mcp",
+    "langsmith",
+    "observability",
+    "tracing"
+  ],
+  "mcpServers": "./.mcp.json",
+  "name": "langsmith",
+  "schema_version": "1.0.0",
+  "version": "0.1.0"
+}

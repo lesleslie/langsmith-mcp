@@ -192,6 +192,10 @@ usage = await get_billing_usage({
 })
 ```
 
+## Installation via Bodai Marketplace
+
+This repo ships a Bodai Claude Code plugin manifest (`.claude-plugin/plugin.json`) plus a colocated `.mcp.json` (HTTP at `http://localhost:3048/mcp`) and three slash commands in `commands/`. To install via the Bodai marketplace, first register the marketplace with Claude Code, then install the plugin by name. Once installed, the slash commands `/langsmith-traces`, `/langsmith-prompts`, and `/langsmith-experiments` become available alongside the `mcp__langsmith__*` tools.
+
 ## Integration with Mahavishnu Ecosystem
 
 LangSmith MCP integrates with the Bodai ecosystem:

@@ -1,0 +1,6 @@
+{
+  "langsmith": {
+    "type": "http",
+    "url": "http://localhost:3048/mcp"
+  }
+}
