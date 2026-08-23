@@ -329,3 +329,11 @@ def register_prompt_tools(server: FastMCP) -> None:
 - [FastMCP Documentation](https://github.com/jlowin/fastmcp)
 - [mcp-common](https://github.com/lesleslie/mcp-common)
 - [Oneiric](https://github.com/lesleslie/oneiric)
+
+## Oneiric action kits
+
+Before writing common primitives (HMAC, token gen, schema validation,
+retries, redaction, HTTP probing, serialization, compression, hashing,
+data transforms), check `oneiric.actions` — catalog lives at
+`oneiric/docs/action-kits.md` in the oneiric project. Discovery hint:
+`mahavishnu/.claude/decisions/promote-oneiric-action-kits.md`.
