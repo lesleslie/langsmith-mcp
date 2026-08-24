@@ -9,7 +9,7 @@ description = "MCP server for LangSmith observability - traces, prompts, dataset
 authors = [
     { name = "Les Leslie", email = "les@wedgwoodwebworks.com" },
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "fastmcp>=3.4.0,<4",
     "mcp-common>=0.18.0",
