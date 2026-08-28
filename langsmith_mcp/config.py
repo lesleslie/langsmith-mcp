@@ -133,7 +133,7 @@ class LangSmithSettings(OneiricMCPConfig):
         server_name: str = "langsmith",
         config_path: Path | None = None,
         env_prefix: str | None = None,
-    ) -> "LangSmithSettings":
+    ) -> LangSmithSettings:
         """Load settings with layered configuration.
 
         Backward-compatible with the MCPBaseSettings.load() signature.

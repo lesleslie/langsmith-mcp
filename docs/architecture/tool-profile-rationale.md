@@ -129,15 +129,15 @@ mental model simple.
 ## What This Refactor Did
 
 1. Removed all 15 `@mcp.tool()` decorators from `langsmith_mcp/main.py`.
-2. Added 7 `register_<group>_tools(server)` functions in main.py.
-3. Added `langsmith_mcp/tools/profiles.py` with `PROFILE_REGISTRATIONS`
+1. Added 7 `register_<group>_tools(server)` functions in main.py.
+1. Added `langsmith_mcp/tools/profiles.py` with `PROFILE_REGISTRATIONS`
    (2-tier), `REGISTRATION_MAP`, `register_all_tool_groups`, and
    `apply_langsmith_tool_profile`.
-4. Wired `apply_langsmith_tool_profile` via lazy `get_app()` and
+1. Wired `apply_langsmith_tool_profile` via lazy `get_app()` and
    `create_app()` entry points in main.py. The `mcp` symbol is now
    a `__getattr__` lazy attribute that returns the dispatched server.
-5. Bumped `mcp-common` pin to `>=0.18.0` in `pyproject.toml`.
-6. Added `tests/unit/test_tool_profile.py` with 12 tests:
+1. Bumped `mcp-common` pin to `>=0.18.0` in `pyproject.toml`.
+1. Added `tests/unit/test_tool_profile.py` with 12 tests:
    - 3 AST guards (no bare `@mcp.tool()`, no sync wrapper in
      production path, production W0 path goes through async helper)
    - 4 profile mapping tests (MINIMAL empty, FULL has all 7 groups,

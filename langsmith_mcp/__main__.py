@@ -91,7 +91,7 @@ class LangSmithMCPServer(BaseOneiricServerMixin):
         try:
             settings = LangSmithSettings()  # ty: ignore[missing-argument]
             api_key_available = bool(settings.api_key)
-        except (ValueError, TypeError, ImportError):
+        except ValueError, TypeError, ImportError:
             api_key_available = False
 
         base_components.append(
