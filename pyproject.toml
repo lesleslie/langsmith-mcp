@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "langsmith-mcp"
-version = "0.5.0"
+version = "0.5.1"
 description = "MCP server for LangSmith observability - traces, prompts, datasets, and experiments"
 authors = [
     { name = "Les Leslie", email = "les@wedgwoodwebworks.com" },
@@ -20,9 +20,6 @@ dependencies = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["langsmith_mcp"]
-
-[tool.uv.sources]
-mcp-common = { path = "../mcp-common", editable = true }
 
 [dependency-groups]
 dev = [
