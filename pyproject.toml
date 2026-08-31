@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "langsmith-mcp"
-version = "0.5.1"
+version = "0.5.2"
 description = "MCP server for LangSmith observability - traces, prompts, datasets, and experiments"
 authors = [
     { name = "Les Leslie", email = "les@wedgwoodwebworks.com" },
@@ -14,7 +14,7 @@ dependencies = [
     "fastmcp>=3.4.0,<4",
     "mcp-common>=0.18.0",
     "oneiric>=0.16.0",
-    "httpx>=0.28.0",
+    "httpx2>=0.28.1",
     "pydantic>=2.12.5",
 ]
 

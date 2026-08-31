@@ -9,7 +9,7 @@ import logging
 from types import TracebackType
 from typing import Any, Self, cast
 
-import httpx
+import httpx2 as httpx
 from mcp_common.exceptions import MCPServerError
 from tenacity import (
     retry,
