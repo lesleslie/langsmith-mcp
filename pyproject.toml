@@ -12,7 +12,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "fastmcp>=3.4.0,<4",
-    "mcp-common>=0.18.0",
+    "mcp-common>=0.26.0,<0.27.0",
     "oneiric>=0.16.0",
     "httpx2>=0.28.1",
     "pydantic>=2.12.5",
