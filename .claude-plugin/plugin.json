@@ -1,14 +1,12 @@
 {
   "author": {
-    "name": "Bodai"
+    "name": "Wedgwood Web Works"
   },
-  "description": "Bodai plugin for the langsmith-mcp LangSmith observability server.",
+  "description": "Plugin for the langsmith-mcp LangSmith observability server.",
   "keywords": [
-    "bodai",
     "mcp",
     "langsmith",
-    "observability",
-    "tracing"
+    "observability"
   ],
   "mcpServers": "./.mcp.json",
   "name": "langsmith",

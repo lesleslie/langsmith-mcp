@@ -192,34 +192,9 @@ usage = await get_billing_usage({
 })
 ```
 
-## Installation via Bodai Marketplace
+## Installation via Claude Code marketplace
 
-This repo ships a Bodai Claude Code plugin manifest (`.claude-plugin/plugin.json`) plus a colocated `.mcp.json` (HTTP at `http://localhost:3048/mcp`) and three slash commands in `commands/`. To install via the Bodai marketplace, first register the marketplace with Claude Code, then install the plugin by name. Once installed, the slash commands `/langsmith-traces`, `/langsmith-prompts`, and `/langsmith-experiments` become available alongside the `mcp__langsmith__*` tools.
-
-## Integration with Mahavishnu Ecosystem
-
-LangSmith MCP integrates with the Bodai ecosystem:
-
-| Component | Integration |
-|-----------|-------------|
-| **Mahavishnu** | Cost tracking → Routing metrics budget alerts |
-| **Akosha** | Trace analysis → Pattern detection across LLM calls |
-| **Session-Buddy** | Thread history → Session correlation |
-
-### Example: Cost Integration with Mahavishnu
-
-```python
-# In Mahavishnu's CostOptimizer
-async def aggregate_costs(self) -> dict:
-    """Combine routing costs + LangSmith billing."""
-    routing_costs = await self.get_routing_costs()
-
-    # Call LangSmith MCP for billing data
-    langsmith_result = await langsmith_mcp.get_billing_usage({})
-    langsmith_costs = langsmith_result.get("data", {})
-
-    return self._merge_cost_reports(routing_costs, langsmith_costs)
-```
+This repo ships a Claude Code plugin manifest (`.claude-plugin/plugin.json`) plus a colocated `.mcp.json` (HTTP at `http://localhost:3048/mcp`) and three slash commands in `commands/`. To install, register the [www-mcp-servers marketplace](https://github.com/lesleslie/www-mcp-servers) with Claude Code, then install the plugin by name. Once installed, the slash commands `/langsmith-traces`, `/langsmith-prompts`, and `/langsmith-experiments` become available alongside the `mcp__langsmith__*` tools.
 
 ## Development
 
@@ -262,3 +237,28 @@ langsmith-mcp/
 ## License
 
 BSD-3-Clause
+
+## Bodai integration
+
+LangSmith MCP integrates with the Bodai ecosystem:
+
+| Component | Integration |
+|-----------|-------------|
+| **Mahavishnu** | Cost tracking → Routing metrics budget alerts |
+| **Akosha** | Trace analysis → Pattern detection across LLM calls |
+| **Session-Buddy** | Thread history → Session correlation |
+
+### Example: Cost integration with Mahavishnu
+
+```python
+# In Mahavishnu's CostOptimizer
+async def aggregate_costs(self) -> dict:
+    """Combine routing costs + LangSmith billing."""
+    routing_costs = await self.get_routing_costs()
+
+    # Call LangSmith MCP for billing data
+    langsmith_result = await langsmith_mcp.get_billing_usage({})
+    langsmith_costs = langsmith_result.get("data", {})
+
+    return self._merge_cost_reports(routing_costs, langsmith_costs)
+```
