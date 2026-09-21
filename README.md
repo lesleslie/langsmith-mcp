@@ -238,27 +238,6 @@ langsmith-mcp/
 
 BSD-3-Clause
 
-## Bodai integration
-
-LangSmith MCP integrates with the Bodai ecosystem:
-
-| Component | Integration |
-|-----------|-------------|
-| **Mahavishnu** | Cost tracking → Routing metrics budget alerts |
-| **Akosha** | Trace analysis → Pattern detection across LLM calls |
-| **Session-Buddy** | Thread history → Session correlation |
-
-### Example: Cost integration with Mahavishnu
-
-```python
-# In Mahavishnu's CostOptimizer
-async def aggregate_costs(self) -> dict:
-    """Combine routing costs + LangSmith billing."""
-    routing_costs = await self.get_routing_costs()
-
-    # Call LangSmith MCP for billing data
-    langsmith_result = await langsmith_mcp.get_billing_usage({})
-    langsmith_costs = langsmith_result.get("data", {})
-
-    return self._merge_cost_reports(routing_costs, langsmith_costs)
-```
+Built on [Oneiric](https://github.com/lesleslie/oneiric) for runtime configuration
+and [mcp-common](https://github.com/lesleslie/mcp-common) for the FastMCP
+baseline. [Crackerjack](https://github.com/lesleslie/crackerjack) gates every commit.
